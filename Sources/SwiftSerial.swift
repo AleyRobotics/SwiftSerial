@@ -385,8 +385,8 @@ public class SerialPort {
     public func openPortViaSocket() throws {
         isSocketModeActive = true
         do {
-            soket = try Socket.create()
-            try soket?.connect(to: ip, port: port)
+            socket = try Socket.create()
+            try socket?.connect(to: ip, port: port)
             
         } catch {
             print("Error: \(error)")
@@ -408,8 +408,12 @@ extension SerialPort {
             let bytesRead = read(fileDescriptor, buffer, size)
             return bytesRead
         } else {
-            let bytesRead = soket?.read(into: buffer, bufSize: size)
-            return bytesRead
+            let bytesRead = socket?.read(into: buffer, bufSize: size)
+            if bytesRead != nil {
+                return bytesRead!
+            } else {
+                return 0
+            }
         }
     }
 
@@ -586,7 +590,12 @@ extension SerialPort {
             let bytesWritten = write(fileDescriptor, buffer, size)
             return bytesWritten
         } else {
-            soket?.write(from: buffer, bufSize: size)
+            let bytesWritten = socket?.write(from: buffer, bufSize: size)
+            if bytesWritten != nil {
+                return bytesWritten!
+            } else {
+                return 0
+            }
         }
     }
 
