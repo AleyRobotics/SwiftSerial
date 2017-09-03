@@ -1,5 +1,6 @@
 # SwiftSerial
 A Swift 3 Linux and Mac library for reading and writing to serial ports. This library has been tested to work on macOS Sierra, Linux Mint 18 (based on Ubuntu 16.04) and on the [Raspberry Pi 3 on Ubuntu 16.04](https://wiki.ubuntu.com/ARM/RaspberryPi). Other platforms using Ubuntu like the Beaglebone might work as well.
+For remote debugging Raspberry Pi apps SwiftSerial port may use TCP/IP for communicating.
 
 This library is an improvement over my previous now deprecated library [SwiftLinuxSerial](https://github.com/yeokm1/SwiftLinuxSerial) which was less Swifty and supported only Linux. This library is thanks largely to [Jay Jun](https://github.com/jayjun). His original pull request can be found [here](https://github.com/yeokm1/SwiftLinuxSerial/pull/1).
 
@@ -8,6 +9,16 @@ This library is an improvement over my previous now deprecated library [SwiftLin
 <img src="https://img.shields.io/badge/OS-Ubuntu-blue.svg?style=flat" alt="Swift 3.0">
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/swift3-compatible-orange.svg?style=flat" alt="Swift 3 compatible" /></a>
 <a href="https://raw.githubusercontent.com/uraimo/SwiftyGPIO/master/LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="License: MIT" /></a>
+
+## SwiftSerial via TCP/IP
+Install Raspberry Pi se2net app
+sudo apt-get install ser2net
+Configure it:
+sudo nano /etc/ser2net.conf
+
+3001:raw:0:/dev/tty1:115200 8DATABITS NONE 1STOPBIT banner
+
+use SerialPort.init(remote_ip: String, remote_port:Int32)
 
 ## Talk on this library
 
