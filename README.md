@@ -12,13 +12,13 @@ This library is an improvement over my previous now deprecated library [SwiftLin
 
 ## SwiftSerial via TCP/IP
 Install Raspberry Pi se2net app
-sudo apt-get install ser2net
+```sudo apt-get install ser2net```
 Configure it:
-sudo nano /etc/ser2net.conf
+```sudo nano /etc/ser2net.conf```
 
-3001:raw:0:/dev/tty1:115200 8DATABITS NONE 1STOPBIT banner
+```3001:raw:0:/dev/tty1:115200 8DATABITS NONE 1STOPBIT banner```
 
-use SerialPort.init(remote_ip: String, remote_port:Int32)
+use ```SerialPort.init(remote_ip: String, remote_port:Int32)```
 
 ## Talk on this library
 
