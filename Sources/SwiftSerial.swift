@@ -1,4 +1,5 @@
 import Foundation
+import Socket
 
 #if os(Linux)
 public enum BaudRate {
@@ -215,9 +216,25 @@ public class SerialPort {
 
     var path: String
     var fileDescriptor: Int32?
+    
+    var socket: Socket?
+    var ip:String = ""
+    var port: Int32 = 0
+    
+    fileprivate var isSocketModeActive = false
+    
+    var isSocketMode: Bool {
+        return isSocketModeActive
+    }
 
     public init(path: String) {
         self.path = path
+    }
+    
+    public init(path: String, remote_ip: String, remote_port:Int32) {
+        self.path = path
+        self.ip = remote_ip
+        self.port = remote_port
     }
 
     public func openPort() throws {
@@ -364,6 +381,18 @@ public class SerialPort {
         }
         fileDescriptor = nil
     }
+    
+    public func openPortViaSocket() throws {
+        isSocketModeActive = true
+        do {
+            soket = try Socket.create()
+            try soket?.connect(to: ip, port: port)
+            
+        } catch {
+            print("Error: \(error)")
+            isSocketModeActive = false
+        }
+    }
 }
 
 // MARK: Receiving
@@ -371,12 +400,17 @@ public class SerialPort {
 extension SerialPort {
 
     public func readBytes(into buffer: UnsafeMutablePointer<UInt8>, size: Int) throws -> Int {
-        guard let fileDescriptor = fileDescriptor else {
-            throw PortError.mustBeOpen
-        }
+        if isSocketModeActive == false {
+            guard let fileDescriptor = fileDescriptor else {
+                throw PortError.mustBeOpen
+            }
 
-        let bytesRead = read(fileDescriptor, buffer, size)
-        return bytesRead
+            let bytesRead = read(fileDescriptor, buffer, size)
+            return bytesRead
+        } else {
+            let bytesRead = soket?.read(into: buffer, bufSize: size)
+            return bytesRead
+        }
     }
 
     public func readData(ofLength length: Int) throws -> Data {
@@ -544,12 +578,16 @@ extension SerialPort {
 extension SerialPort {
 
     public func writeBytes(from buffer: UnsafeMutablePointer<UInt8>, size: Int) throws -> Int {
-        guard let fileDescriptor = fileDescriptor else {
-            throw PortError.mustBeOpen
-        }
+        if isSocketModeActive == true {
+            guard let fileDescriptor = fileDescriptor else {
+                throw PortError.mustBeOpen
+            }
 
-        let bytesWritten = write(fileDescriptor, buffer, size)
-        return bytesWritten
+            let bytesWritten = write(fileDescriptor, buffer, size)
+            return bytesWritten
+        } else {
+            soket?.write(from: buffer, bufSize: size)
+        }
     }
 
     public func writeData(_ data: Data) throws -> Int {
