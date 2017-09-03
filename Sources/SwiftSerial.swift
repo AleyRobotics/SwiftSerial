@@ -408,7 +408,7 @@ extension SerialPort {
             let bytesRead = read(fileDescriptor, buffer, size)
             return bytesRead
         } else {
-            let bytesRead = socket?.read(into: buffer, bufSize: size)
+            let bytesRead = try socket?.read(into: buffer, bufSize: size)
             if bytesRead != nil {
                 return bytesRead!
             } else {
@@ -590,7 +590,7 @@ extension SerialPort {
             let bytesWritten = write(fileDescriptor, buffer, size)
             return bytesWritten
         } else {
-            let bytesWritten = socket?.write(from: buffer, bufSize: size)
+            let bytesWritten = try socket?.write(from: buffer, bufSize: size)
             if bytesWritten != nil {
                 return bytesWritten!
             } else {
